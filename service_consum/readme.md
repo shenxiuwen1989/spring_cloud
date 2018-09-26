@@ -22,6 +22,6 @@
         FlashMap getFlashMap()：得到FlashMap；
         Object getAsyncResult()/Object getAsyncResult(long timeout)：得到异步执行的结果；
     4.如何实现hystrix默认集群监控/指定的集群监控/单体应用的监控
-        
+    5.利用spring cloud config从config配置中心获取配置     
     
     
