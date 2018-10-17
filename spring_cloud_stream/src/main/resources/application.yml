@@ -1,0 +1,27 @@
+server:
+  port: 2020
+spring:
+  application:
+    name: stream
+  cloud:
+    stream:
+      binders: # 在此处配置要绑定的rabbitmq的服务信息；
+        bindings:
+                input:
+                  destination: queue.log.messages #input绑定使用名为queue.log.messages的消息交换机
+                  binder: local_rabbit
+                  group: logMessageConsumers
+                output:
+                  destination: queue.pretty.log.messages #output绑定使用名为queue.pretty.log.messages的消息交换机
+                  binder: local_rabbit
+              binders:
+                local_rabbit:
+                  type: rabbit
+                  environment:
+                    spring:
+                      rabbitmq:
+                        host: localhost
+                        port: 5672
+                        username: guest
+                        password: guest
+                        virtual-host: /
