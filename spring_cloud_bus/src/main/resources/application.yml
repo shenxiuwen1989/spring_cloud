@@ -1,0 +1,12 @@
+server:
+  port: 3030
+spring:
+  application:
+    name: bus
+  rabbitmq:
+    host:
+    port:
+    username:
+    password:
+
+
