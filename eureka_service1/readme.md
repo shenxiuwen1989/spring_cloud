@@ -23,3 +23,6 @@ eureka_service做注册中心
     要改成 spring.application.name=eureka-service-01
       eureka.instance.hostname=01.server.eureka
     因为在eureka中java.net.URI不能区分下划线(反正不能用下划线即可)，所以切记，当使用host作为defaultZone配置时，不要以下划线来命名
+    
+ (4)输入http://127.0.0.1:1111/可查看注册服务
+ 

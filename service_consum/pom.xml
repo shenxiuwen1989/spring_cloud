@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.sxw</groupId>
-    <artifactId>eureka_service</artifactId>
+    <artifactId>service_consum</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <name>eureka_server</name>
-    <description>Eureka server</description>
+    <name>eureka_consum</name>
+    <description>eureka_consum</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -17,6 +17,12 @@
         <version>1.5.10.RELEASE</version>
         <relativePath/>
     </parent>
+
+    <properties>
+        <!--设置字符编码及java版本-->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>1.8</java.version>
+    </properties>
 
     <dependencies>
 
@@ -51,22 +57,35 @@
             <artifactId>spring-cloud-starter-hystrix-dashboard</artifactId>
         </dependency>
 
-        <!-- hystrix健康监控-->
+       <!--  -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-cloud-starter-actuator</artifactId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
-        <!--config-->
+        <!--config客户端依赖-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>
         </dependency>
+
+        <!--config提供重试功能-->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
+            <groupId>org.springframework.retry</groupId>
+            <artifactId>spring-retry</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!--lombok-->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
