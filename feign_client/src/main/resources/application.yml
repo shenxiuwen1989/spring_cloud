@@ -1,0 +1,38 @@
+server:
+  port: 9090
+feign: 
+  okhttp: 
+    enabled: false
+  httpclient: 
+    enabled: true
+  hystrix:
+    enabled: true
+  client:
+    config:
+      openApiFeignClient: 
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: full
+
+#设置hystrix超时时间，默认hystrix超时1秒即会进入failback
+hystrix: 
+  command: 
+    default: 
+      execution: 
+        isolation: 
+          thread: 
+            timeoutInMilliseconds: 5000
+spring:
+  sleuth:
+    feign:
+      enabled: true
+      processor:
+        enabled: true
+    messaging:
+      rabbit:
+        enabled: true
+  application:
+    admin:
+      enabled: true
+    name: feignClient
+
