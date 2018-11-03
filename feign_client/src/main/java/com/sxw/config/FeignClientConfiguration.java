@@ -14,13 +14,12 @@
 package com.sxw.config;
 
 
+import com.sxw.log.FeignSlf4jLogger;
 import feign.Contract;
 import feign.Logger;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.AuthSchemes;
 import org.apache.http.client.config.CookieSpecs;
@@ -39,8 +38,6 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.MediaType;
-import org.springframework.util.DigestUtils;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -58,12 +55,7 @@ public class FeignClientConfiguration {
     
     @Autowired
     private FeignHttpClientConfiguration config;
-    
-    @Autowired
-    protected KyeHttpHeaderService kyeHttpHeaderService;
-    
-    @Autowired
-    private ApplicationSignatureConfiguration signature;
+
     
     @Bean
     public Logger.Level feignLoggerLevel() {
@@ -85,24 +77,17 @@ public class FeignClientConfiguration {
         return new RequestInterceptor() {
             @Override
             public void apply(RequestTemplate template) {
-                if(StringUtils.contains(template.url(), "/router/rest")) {
-                    
                     Map<String, Collection<String>> headers = template.headers();
                     
                     //获取请求体json字符串
                     String paramJson = new String(template.body(),StandardCharsets.UTF_8);
-                    Map<String, String> keyHttpHeader = kyeHttpHeaderService.getFeignClientHeaders();
-                    
-                    AssertUtils.assertException(MapUtils.isEmpty(keyHttpHeader), "1008", "未设置正确的请求头");
-                    
-                    keyHttpHeader.forEach((k,v) -> template.header(k, v));
 
-                    //签名
-                    template.header("sign", StringUtils.upperCase(DigestUtils.md5DigestAsHex((signature.getAppsecret() + headers.get("timestamp") + paramJson).getBytes(StandardCharsets.UTF_8))));
-                }else {
-                    template.header("Accept", MediaType.APPLICATION_JSON_VALUE);
-                    template.header("Content-Type", MediaType.APPLICATION_JSON_VALUE);
-                }
+                    //设置消息头
+                    Map<String, String> keyHttpHeader = new HashMap<>();
+                    keyHttpHeader.put("timestamp",String.valueOf(System.currentTimeMillis()));
+                    keyHttpHeader.put("Accept", "application/json");
+                    keyHttpHeader.put("Content-Type", "application/json");
+                    keyHttpHeader.forEach((k,v) -> template.header(k, v));
             }
         };
     }

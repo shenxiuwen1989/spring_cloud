@@ -8,11 +8,9 @@
  */
 package com.sxw.api;
 
-import com.kye.serviceaggregator.erp.model.LogisticsRouter;
-import com.kye.serviceaggregator.erp.model.SubWaybill;
-import com.kye.serviceaggregator.erp.request.*;
-import com.kye.serviceaggregator.erp.response.*;
-import com.kye.serviceaggregator.model.Token;
+
+import com.sxw.entry.ErpResQueryLogisticsTakeTime;
+import com.sxw.entry.ReturnObject;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,18 +19,9 @@ import java.util.Map;
 @Component
 public class OpenApiFeignClientBreaker implements OpenApiFeignClient{
 
-
     @Override
-    public ReturnObject<ErpCloudWarehouseWaybillInfo> queryCloudWarehouseWaybillInfo(Map<String, Object> requestParameter) {
+    public ReturnObject<List<ErpResQueryLogisticsTakeTime>> queryLogisticsTakeTime(Map<String, Object> requestParameter) {
         return ReturnObject.failbackFailure();
     }
-
-    @Override
-    public ReturnObject<Token> applyAccessToken(Map<String, String> params) {
-        return ReturnObject.failbackFailure();
-    }
-
-
-    
 }
 

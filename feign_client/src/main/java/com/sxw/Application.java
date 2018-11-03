@@ -14,8 +14,15 @@ package com.sxw; /*
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
+/**
+ * 启动配置上检查是否有@EnableFeignClients注解，如果有该注解，则开启包扫描，扫描被@FeignClient注解接口
+ */
 @SpringBootApplication
+@EnableCircuitBreaker
+@EnableFeignClients
 public class Application {
 
     public static void main(String[] args) {
