@@ -26,6 +26,7 @@
         <spring-boot-admin.version>2.0.1</spring-boot-admin.version>
         <spring-cloud.version>Finchley.RELEASE</spring-cloud.version>
         <commons-io-version>2.6</commons-io-version>
+        <logstash-logback-encoder-version>5.2</logstash-logback-encoder-version>
     </properties>
 
     <dependencies>
@@ -81,7 +82,12 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
-
+        <!-- https://mvnrepository.com/artifact/net.logstash.logback/logstash-logback-encoder -->
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>${logstash-logback-encoder-version}</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
         <dependency>
             <groupId>commons-io</groupId>
@@ -108,7 +114,49 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <!-- Maven控制Spring Profile -->
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <profileActive>dev</profileActive>
+            </properties>
+        </profile>
+        <profile>
+            <id>test</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <profileActive>test</profileActive>
+            </properties>
+        </profile>
+        <profile>
+            <id>release</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <profileActive>release</profileActive>
+            </properties>
+        </profile>
+    </profiles>
     <build>
+        <finalName>${project.artifactId}</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>application.yml</include>
+                    <include>log-${profileActive}.xml</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

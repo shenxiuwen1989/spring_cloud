@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+	<include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+	​
+	<springProperty scope="context" name="springAppName" source="spring.application.name"/>
+	<!-- Example for logging into the build folder of your project -->
+	<property name="LOG_FILE" value="${user.home}/logs/${springAppName}"/>​
+
+	<!-- You can override this to have a custom pattern -->
+	<property name="CONSOLE_LOG_PATTERN" value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"/>
+
+	<!-- Appender to log to console -->
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<!-- Minimum logging level to be presented in the console logs-->
+			<level>DEBUG</level>
+		</filter>
+		<encoder>
+			<pattern>${CONSOLE_LOG_PATTERN}</pattern>
+			<charset>utf8</charset>
+		</encoder>
+	</appender>
+
+	<!-- Appender to log to file  -->​
+	<appender name="flatfile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_FILE}.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<maxHistory>90</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>${CONSOLE_LOG_PATTERN}</pattern>
+			<charset>utf8</charset>
+		</encoder>
+	</appender>
+	​
+	<!-- Appender to log to file in a JSON format -->
+	<appender name="logstash" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_FILE}-json.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_FILE}-%d{yyyy-MM-dd}-json.log</fileNamePattern>
+			<maxHistory>7</maxHistory>
+		</rollingPolicy>
+		<encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+			<providers>
+				<timestamp>
+					<timeZone>UTC</timeZone>
+				</timestamp>
+				<pattern>
+					<!-- service-name注意：spring cloud sleuth文档中pattern为service这样会导致存入es的时候报错，故改为service-name-->
+					<pattern>
+						{
+						"severity": "%level",
+						"service-name": "${springAppName:-}",
+						"trace": "%X{X-B3-TraceId:-}",
+						"span": "%X{X-B3-SpanId:-}",
+						"parent": "%X{X-B3-ParentSpanId:-}",
+						"exportable": "%X{X-Span-Export:-}",
+						"pid": "${PID:-}",
+						"thread": "%thread",
+						"class": "%logger{40}",
+						"rest": "%message"
+						}
+					</pattern>
+				</pattern>
+			</providers>
+		</encoder>
+	</appender>
+	
+	<appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 默认情况下，当阻塞队列剩余 20％ 的容量时将删除 TRACE，DEBUG 和 INFO 级别的事件，
+              只保留 WARN 和 ERROR 级别的事件设置 discardingThreshold 为 0 将保留所有事件 -->
+        <discardingThreshold>0</discardingThreshold>
+        <!-- 如果为 true, 则调用者数据将可用于远程主机. 默认情况下不可用 ==> 也就是让上面的 class method file line 可用 -->
+        <includeCallerData>true</includeCallerData>
+        <appender-ref ref ="logstash"/>
+    </appender>
+	
+    <logger name="com.kye.serviceaggregator" level="info"/>
+    <logger name="org.hibernate" level="info"/>
+    <logger name="org.mybatis" level="info"/>
+    <logger name="freemarker" level="info"/>
+    <logger name="org.apache" level="info"/>
+    <logger name="com.github" level="info"/>
+    <logger name="org.springframework" level="info"/>
+    <logger name="com.kye" level="info"/>
+    <logger name="feign" level="debug"/>
+	​
+	<root level="INFO">
+		<appender-ref ref="ASYNC"/>
+		<appender-ref ref="console"/>
+		<!-- uncomment this to have also JSON logs -->
+		<!--<appender-ref ref="logstash"/>-->
+		<!-- 开发环境可以使用 flatfile 生产环境使用logstash-->
+		<!--<appender-ref ref="flatfile"/>-->
+	</root>
+</configuration>

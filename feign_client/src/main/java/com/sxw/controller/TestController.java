@@ -14,17 +14,17 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping(value = "test")
+@RequestMapping(value = "/test")
 public class TestController {
 
     @Autowired
     private BaseService baseService;
 
-    @RequestMapping(value = "prc",method = RequestMethod.POST)
+    @RequestMapping(value = "/prc",method = RequestMethod.POST)
     public String prc(){
         Map<String, Object> requestParameter = new HashMap<>();
         requestParameter.put("waybillNumber", "123456");
-        baseService.queryLogisticsTakeTime(requestParameter);
+        ReturnObject<List<ErpResQueryLogisticsTakeTime>> returnObject = baseService.queryLogisticsTakeTime(requestParameter);
         return "成功";
     }
 }
